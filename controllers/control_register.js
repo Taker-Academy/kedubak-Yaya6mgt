@@ -1,41 +1,33 @@
 const { addNewUser } = require("../functionUtil/handlingRegister");
 const UserModel = require("../models/models_User");
-const bcrypt = require('bcrypt');
+const User = require('../models/models_User');
+const toke = require("../functionUtil/handlingToken");
 
 function errorForRegister(body, res)
 {
     if (!(body)) {
-        res.status(400);
+        res.status(400).json("Body vide");
         return 1;
     }
     if (typeof body !== "object" || Object.keys(body).length !== 4 ||
     !body.email || !body.password || !body.firstName || !body.lastName ||
     typeof body.email !== "string" || typeof body.password !== "string" ||
     typeof body.lastName !== "string" || typeof body.firstName !== "string") {
-        res.status(400);
+        res.status(400).json("Erreur de saisie");
         return 1;
     }
     return 0;
 }
 
-async function createToken(password)
-{
-    return bcrypt
-        .hash(password, 15)
-        .then(hash => {
-            return hash;
-        })
-        .catch(error => {
-            return false;
-        })
-}
-
 async function sendResponse(body)
 {
+    const user = await User.findOne({ email: body.email });
+    const createTok = await toke.createToken(user);
+
     const response = {
         ok: true,
         data: {
-            token: createToken(body.password),
+            token: createTok,
             user: {
                 email: body.email,
                 firstName: body.firstName,
