@@ -13,9 +13,11 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({extended: false}));
 
-app.use("/post", require("./routes/route_post"));
+// app.use("/post", require("./routes/route_post"));
 
 app.use("/auth", require("./routes/route_auth"));
+
+app.use("/user", require("./routes/route_user"));
 
 /* LANCEMENT SERVEUR */
 app.listen(port, () => console.log("Server in port " +  port + " is OK !"));

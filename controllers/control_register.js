@@ -1,5 +1,4 @@
 const { addNewUser } = require("../functionUtil/handlingRegister");
-const UserModel = require("../models/models_User");
 const User = require('../models/models_User');
 const toke = require("../functionUtil/handlingToken");
 

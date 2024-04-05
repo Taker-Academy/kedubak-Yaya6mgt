@@ -14,4 +14,20 @@ async function createToken(user)
 
 }
 
-module.exports= {createToken};
+async function verifyToken(myTok)
+{
+    return jwt.verify(myTok, process.env.CRYPT_TOK, (err, decoded) => {
+        if (err) {
+            return {
+                code: 401,
+            };
+        } else {
+            return {
+                code: 200,
+                data: decoded,
+            };
+        }
+    });
+}
+
+module.exports= {createToken, verifyToken};
