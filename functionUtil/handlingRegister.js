@@ -1,22 +1,18 @@
 const User = require('../models/models_User');
 const Post = require('../models/models_Post');
+const bcrypt = require('bcrypt');
 
-// async function errorForRegister(body, res)
-// {
-//     if (!(body)) {
-//         res.status(400);
-//         return 1;
-//     }
-//     if (typeof body !== "object" || Object.keys(body).length !== 4 ||
-//     !body.email || !body.password || !body.firstName || !body.lastName ||
-//     typeof body.email !== "string" || typeof body.password !== "string" ||
-//     typeof body.lastName !== "string" || typeof body.firstName !== "string") {
-//         res.status(400);
-//         return 1;
-//     }
-//     return 0;
-// }
-// module.exports = { errorForRegister };
+async function hashPassword(password)
+{
+    return bcrypt
+        .hash(password, 15)
+        .then(hash => {
+            return hash;
+        })
+        .catch(error => {
+            return "";
+        })
+}
 
 async function emailExists(email) {
     try {
@@ -39,11 +35,12 @@ async function addNewUser(body) {
         console.log("J'ai deja un mail : " + body.email);
         return 1;
     }
+    const hashPass = await hashPassword(body.password);
     try {
         const newUser = new User({
             createdAt: new Date(),
             email: body.email,
-            password: body.password,
+            password: hashPass,
             firstName: body.firstName,
             lastName: body.lastName
         });
