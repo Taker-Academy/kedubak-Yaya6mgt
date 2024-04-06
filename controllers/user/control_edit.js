@@ -14,6 +14,15 @@ async function hashPassword(password)
         })
 }
 
+function sendError(message)
+{
+    const response = {
+        ok: false,
+        error: message,
+    };
+    return JSON.stringify(response);
+}
+
 async function sendResponse(user)
 {
     const response = {
@@ -31,7 +40,7 @@ async function modifData(user, body, res) {
     try {
         if ((typeof body.lastName !== "string" && body.lastName) || (typeof body.email !== "string" && body.email) ||
         (typeof body.firstName !== "string" && body.firstName) || (typeof body.password !== "string" && body.password)) {
-            res.status(422).json();
+            res.status(422).json(sendError("Échec de validation des paramètres."));
             return;
         }
         if (body.email) {
@@ -66,7 +75,7 @@ module.exports.setEdit = async (req, res) => {
 
     try {
         if (resTok.code === 401) {
-            res.status(401).json();
+            res.status(401).json(sendError("Mauvais token JWT."));
             return;
         }
         const user = await User.findOne({ _id: resTok.data.userId });
@@ -74,6 +83,6 @@ module.exports.setEdit = async (req, res) => {
         return;
     } catch (error) {
         console.error('Erreur lors du traitement de la requête :', error);
-        res.status(500).json("Erreur lors de la mise à jour des données");
+        res.status(500).json(sendError("Erreur interne du serveur."));
     }
 };

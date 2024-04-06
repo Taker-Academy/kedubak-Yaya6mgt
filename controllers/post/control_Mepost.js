@@ -22,7 +22,7 @@ function sendResponse(post)
         ok: true,
         data: post,
     };
-    console.log(response);
+    console.log("response ==> " + response);
     return JSON.stringify(response);
 }
 
@@ -33,17 +33,16 @@ module.exports.setMePosts = async (req, res) => {
 
     try {
         if (resTok.code === 401) {
-            res.status(401).json();
+            res.status(401).json(sendError("Mauvais token JWT."));
             return;
         }
         const allPost = await getAllPosts(resTok.data);
         const response = sendResponse(allPost);
-        console.log(response);
         res.status(200).json(response);
         return;
     } catch (error) {
         console.error('Erreur lors du traitement de la requête :', error);
-        res.status(500).json("Crash system §");
+        res.status(500).json(sendError("Erreur interne du serveur."));
         return;
     }
 };

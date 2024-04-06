@@ -2,17 +2,26 @@ const { addNewUser } = require("../../functionUtil/handlingRegister");
 const User = require('../../models/models_User');
 const toke = require("../../functionUtil/handlingToken");
 
+function sendError(message)
+{
+    const response = {
+        ok: false,
+        error: message,
+    };
+    return JSON.stringify(response);
+}
+
 function errorForRegister(body, res)
 {
     if (!(body)) {
-        res.status(400).json("Body vide");
+        res.status(400).json(sendError("Mauvaise requête, paramètres manquants ou invalides."));
         return 1;
     }
     if (typeof body !== "object" || Object.keys(body).length !== 4 ||
     !body.email || !body.password || !body.firstName || !body.lastName ||
     typeof body.email !== "string" || typeof body.password !== "string" ||
     typeof body.lastName !== "string" || typeof body.firstName !== "string") {
-        res.status(400).json("Erreur de saisie");
+        res.status(400).json(sendError("Mauvaise requête, paramètres manquants ou invalides."));
         return 1;
     }
     return 0;
@@ -46,7 +55,7 @@ module.exports.setRegister = async (req, res) => {
         }
         const newUseRes = await addNewUser(body);
         if (newUseRes === 1) {
-            res.status(401).json({ error: 'Erreur lors de l\'ajout de l\'utilisateur !' });
+            res.status(401).json(sendError("Mauvais identifiants."));
             return;
         }
         const user = await sendResponse(body);
@@ -54,7 +63,7 @@ module.exports.setRegister = async (req, res) => {
         return;
     } catch (error) {
         console.error('Erreur lors du traitement de la requête :', error);
-        res.status(500);
+        res.status(500).json(sendError("Erreur interne du serveur."));
         return;
     }
 };

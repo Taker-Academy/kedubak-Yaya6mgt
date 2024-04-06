@@ -69,17 +69,17 @@ async function verifLogin(body)
 async function errorForLogin(body, res)
 {
     if (!(body)) {
-        res.status(400).json("Body vide");
+        res.status(400).json(sendError("Mauvaise requête, paramètres manquants ou invalides."));
         return 1;
     }
     if (typeof body !== "object" || Object.keys(body).length !== 2 ||
     !body.email || !body.password || typeof body.email !== "string" || typeof body.password !== "string") {
-        res.status(400).json("Erreur de saisie");
+        res.status(400).json(sendError("Mauvaise requête, paramètres manquants ou invalides."));
         return 1;
     }
     const resultLog = await verifLogin(body);
     if (resultLog === 1) {
-        res.status(401).json("Erreur de login");
+        res.status(401).json(sendError("Mauvais identifiants."));
         return 1;
     }
     return 0;
@@ -103,6 +103,15 @@ async function sendResponse(body)
     return JSON.stringify(response, null, 4);
 }
 
+function sendError(message)
+{
+    const response = {
+        ok: false,
+        error: message,
+    };
+    return JSON.stringify(response);
+}
+
 module.exports.setLogin = async (req, res) => {
     const body = req.body;
     try {
@@ -117,7 +126,7 @@ module.exports.setLogin = async (req, res) => {
         return;
     } catch (error) {
         console.error('Erreur lors du traitement de la requête :', error);
-        res.status(500).json("Crash system §");
+        res.status(500).json(sendError("Erreur interne du serveur."));
         return;
     }
 };

@@ -1,6 +1,15 @@
 const toke = require("../../functionUtil/handlingToken");
 const User = require('../../models/models_User');
 
+function sendError(message)
+{
+    const response = {
+        ok: false,
+        error: message,
+    };
+    return JSON.stringify(response);
+}
+
 async function sendResponse(user)
 {
     const response = {
@@ -21,7 +30,7 @@ async function searchDelete(data, res)
     try {
         if (!user) {
             console.log("Pas d'identifiant");
-            res.status(404).json();
+            res.status(404).json(sendError("Utilisateur non trouvé."));
             return;
         }
         const response = await sendResponse(user);
@@ -50,14 +59,14 @@ module.exports.setRemove = async (req, res) => {
 
     try {
         if (resTok.code === 401) {
-            res.status(401).json();
+            res.status(401).json(sendError("Mauvais token JWT."));
             return;
         }
         await searchDelete(resTok.data, res);
         return;
     } catch (error) {
         console.error('Erreur lors du traitement de la requête :', error);
-        res.status(500).json("Crash system §");
+        res.status(500).json(sendError("Erreur interne du serveur."));
         return;
     }
 };

@@ -16,6 +16,15 @@ async function getAllPosts() {
     }
 }
 
+function sendError(message)
+{
+    const response = {
+        ok: false,
+        error: message,
+    };
+    return JSON.stringify(response);
+}
+
 function sendResponse(post)
 {
     const response = {
@@ -33,7 +42,7 @@ module.exports.setGetPosts = async (req, res) => {
 
     try {
         if (resTok.code === 401) {
-            res.status(401).json();
+            res.status(401).json(sendError("Mauvais token JWT."));
             return;
         }
         const allPost = await getAllPosts();
@@ -43,7 +52,7 @@ module.exports.setGetPosts = async (req, res) => {
         return;
     } catch (error) {
         console.error('Erreur lors du traitement de la requête :', error);
-        res.status(500).json("Crash system §");
+        res.status(500).json(sendError("Erreur interne du serveur."));
         return;
     }
 };

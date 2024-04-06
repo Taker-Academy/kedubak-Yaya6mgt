@@ -66,11 +66,11 @@ module.exports.setPostPosts = async (req, res) => {
 
     try {
         if (resTok.code === 401) {
-            res.status(401).json();
+            res.status(401).json(sendError("Mauvais token JWT."));
             return;
         }
         if (errorRequete(body) === 1) {
-            res.status(400).json();
+            res.status(400).json(sendError("Mauvaise requête, paramètres manquants ou invalides."));
             return;
         }
         const post = await createPost(body, resTok.data);
@@ -80,7 +80,7 @@ module.exports.setPostPosts = async (req, res) => {
         return;
     } catch (error) {
         console.error('Erreur lors du traitement de la requête :', error);
-        res.status(500).json("Crash system §");
+        res.status(500).json(sendError("Erreur interne du serveur."));
         return;
     }
 };
