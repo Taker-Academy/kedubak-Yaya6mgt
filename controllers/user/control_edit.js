@@ -1,5 +1,5 @@
-const toke = require("../functionUtil/handlingToken");
-const User = require('../models/models_User');
+const toke = require("../../functionUtil/handlingToken");
+const User = require('../../models/models_User');
 const bcrypt = require('bcrypt');
 
 async function hashPassword(password)

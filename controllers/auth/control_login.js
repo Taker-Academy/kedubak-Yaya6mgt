@@ -1,6 +1,6 @@
-const User = require("../models/models_User");
+const User = require("../../models/models_User");
 const bcrypt = require('bcrypt');
-const toke = require("../functionUtil/handlingToken");
+const toke = require("../../functionUtil/handlingToken");
 
 async function compareMdp(pass1, pass2)
 {

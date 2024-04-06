@@ -1,12 +1,13 @@
 const express = require("express");
-const { setGetPosts } = require("../controllers/control_Getpost");
-const { setPostPosts } = require("../controllers/control_Postpost");
+const { setGetPosts } = require("../controllers/post/control_Getpost");
+const { setPostPosts } = require("../controllers/post/control_Postpost");
+const { setMePosts } = require("../controllers/post/control_Mepost");
 const router = express.Router();
 
-//A finir
-router.get("/", setGetPosts);
+// router.get("/", setGetPosts);
 
-//A finir
 router.post("/", setPostPosts);
+
+// router.get("/me", setMePosts);
 
 module.exports = router;

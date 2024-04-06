@@ -1,6 +1,6 @@
-const toke = require("../functionUtil/handlingToken");
-const User = require('../models/models_User');
-const Post = require('../models/models_Post');
+const toke = require("../../functionUtil/handlingToken");
+const User = require('../../models/models_User');
+const Post = require('../../models/models_Post');
 
 async function sendResponse(post)
 {
@@ -30,8 +30,6 @@ async function createPost(body, data)
             firstName: user.firstName,
             title: body.title,
             content: body.content,
-            comment: [],
-            upVotes: [],
         });
 
         const savedPost = await newPost.save();

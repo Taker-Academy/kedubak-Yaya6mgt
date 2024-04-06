@@ -1,6 +1,6 @@
-const { addNewUser } = require("../functionUtil/handlingRegister");
-const User = require('../models/models_User');
-const toke = require("../functionUtil/handlingToken");
+const { addNewUser } = require("../../functionUtil/handlingRegister");
+const User = require('../../models/models_User');
+const toke = require("../../functionUtil/handlingToken");
 
 function errorForRegister(body, res)
 {
