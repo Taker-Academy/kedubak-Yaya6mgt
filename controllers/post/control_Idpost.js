@@ -63,7 +63,7 @@ module.exports.setIdPosts = async (req, res) => {
         if (errorRequest(resTok.data, body) === 1) {
             return;
         }
-        const post = await Post.find({_id: body.id});
+        const post = await Post.findOne({ _id: body.id }, { 'comments.createdAt': 0 });
         res.status(200).json(sendResponse(post));
         return;
     } catch (error) {

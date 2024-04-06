@@ -4,7 +4,7 @@ const { response } = require("express");
 
 async function getAllPosts(data) {
     try {
-        const posts = await Post.find({userId: data.userId});
+        const posts = await Post.findOne({ userId: data.userId}, { 'comments.createdAt': 0 });
         const postClean = posts.map(post => {
             const { __v, updatedAt, ...newPost } = post.toObject();
             return newPost;
