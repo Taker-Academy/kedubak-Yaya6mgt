@@ -20,6 +20,15 @@ async function sendResponse(post)
     return JSON.stringify(response);
 }
 
+function sendError(message)
+{
+    const response = {
+        ok: false,
+        error: message,
+    };
+    return JSON.stringify(response);
+}
+
 async function createPost(body, data)
 {
     const user = await User.findOne({ _id: data.userId });

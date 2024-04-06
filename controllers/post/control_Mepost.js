@@ -16,6 +16,15 @@ async function getAllPosts(data) {
     }
 }
 
+function sendError(message)
+{
+    const response = {
+        ok: false,
+        error: message,
+    };
+    return JSON.stringify(response);
+}
+
 function sendResponse(post)
 {
     const response = {
