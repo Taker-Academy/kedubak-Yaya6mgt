@@ -43,9 +43,15 @@ const userSchema = mongoose.Schema(
             type: String,
             required: true,
         },
-        comments:[
-            commentSchema
-        ],
+        comments: {
+        type: [commentSchema],
+        default: []
+        },
+        upVotes: {
+            type: [String],
+            default: [],
+            required: true
+        }
     },
     {
         timestamps: true,
