@@ -1,4 +1,5 @@
 const jwt = require("jsonwebtoken");
+const listTok = require('../blackToken/blackToken');
 
 async function createToken(user)
 {
@@ -16,18 +17,19 @@ async function createToken(user)
 
 async function verifyToken(myTok)
 {
-    return jwt.verify(myTok, process.env.CRYPT_TOK, (err, decoded) => {
-        if (err) {
-            return {
-                code: 401,
-            };
-        } else {
-            return {
-                code: 200,
-                data: decoded,
-            };
-        }
-    });
+    if (listTok.verifierTokenDansListeNoire(myTok)) {
+        console.log("je suis la");
+        return { code: 401 };
+    }
+    try {
+        const decoded = jwt.verify(myTok, process.env.CRYPT_TOK);
+        return {
+            code: 200,
+            data: decoded
+        };
+    } catch (err) {
+        return { code: 401 };
+    }
 }
 
 module.exports= {createToken, verifyToken};
