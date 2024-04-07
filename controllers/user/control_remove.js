@@ -1,5 +1,6 @@
 const toke = require("../../functionUtil/handlingToken");
 const User = require('../../models/models_User');
+const listTok = require('../../blackToken/blackToken');
 
 function sendError(message)
 {
@@ -24,7 +25,7 @@ async function sendResponse(user)
     return JSON.stringify(response);
 }
 
-async function searchDelete(data, res)
+async function searchDelete(data, res, token)
 {
     const user = await User.findOne({ _id: data.userId });
     try {
@@ -34,6 +35,7 @@ async function searchDelete(data, res)
             return;
         }
         const response = await sendResponse(user);
+        listTok.ajouterTokenALaListeNoire(token);
         User.deleteOne({ _id: data.userId })
             .then(result => {
                 if (result.deletedCount > 0) {
@@ -62,7 +64,7 @@ module.exports.setRemove = async (req, res) => {
             res.status(401).json(sendError("Mauvais token JWT."));
             return;
         }
-        await searchDelete(resTok.data, res);
+        await searchDelete(resTok.data, res, tokenNID);
         return;
     } catch (error) {
         console.error('Erreur lors du traitement de la requête :', error);

@@ -4,17 +4,14 @@ const { response } = require("express");
 
 async function getAllPosts() {
     try {
-        const posts = await Post.find({}, { 'comments.createdAt': 0 });
-        const postClean = posts.map(post => {
-            const { __v, updatedAt, ...newPost } = post.toObject();
-            return newPost;
-        });
-        return postClean;
+        const posts = await Post.find().lean();
+        return posts;
     } catch (error) {
         console.error('Erreur lors de la récupération des posts :', error);
         throw error;
     }
 }
+
 
 function sendError(message)
 {
@@ -32,7 +29,7 @@ function sendResponse(post)
         data: post,
     };
     console.log(response);
-    return JSON.stringify(response);
+    return response;
 }
 
 module.exports.setGetPosts = async (req, res) => {
@@ -48,7 +45,7 @@ module.exports.setGetPosts = async (req, res) => {
         const allPost = await getAllPosts();
         const response = sendResponse(allPost);
         console.log(response);
-        res.status(200).json(response);
+        res.status(200).json({ok: true, data: allPost});
         return;
     } catch (error) {
         console.error('Erreur lors du traitement de la requête :', error);

@@ -2,14 +2,24 @@ const toke = require("../../functionUtil/handlingToken");
 const Post = require('../../models/models_Post');
 const { response } = require("express");
 
+// async function getAllPosts(data) {
+//     try {
+//         const posts = await Post.findOne({ userId: data.userId}, { 'comments.createdAt': 0 });
+//         const postClean = posts.map(post => {
+//             const { __v, updatedAt, ...newPost } = post.toObject();
+//             return newPost;
+//         });
+//         return postClean;
+//     } catch (error) {
+//         console.error('Erreur lors de la récupération des posts :', error);
+//         throw error;
+//     }
+// }
+
 async function getAllPosts(data) {
     try {
-        const posts = await Post.findOne({ userId: data.userId}, { 'comments.createdAt': 0 });
-        const postClean = posts.map(post => {
-            const { __v, updatedAt, ...newPost } = post.toObject();
-            return newPost;
-        });
-        return postClean;
+        const posts = await Post.find({ userId: data.userId}).lean();
+        return posts;
     } catch (error) {
         console.error('Erreur lors de la récupération des posts :', error);
         throw error;
@@ -31,7 +41,6 @@ function sendResponse(post)
         ok: true,
         data: post,
     };
-    console.log("response ==> " + response);
     return JSON.stringify(response);
 }
 
@@ -46,8 +55,10 @@ module.exports.setMePosts = async (req, res) => {
             return;
         }
         const allPost = await getAllPosts(resTok.data);
-        const response = sendResponse(allPost);
-        res.status(200).json(response);
+        res.status(200).json({
+            ok: true,
+            data: allPost,
+        });
         return;
     } catch (error) {
         console.error('Erreur lors du traitement de la requête :', error);

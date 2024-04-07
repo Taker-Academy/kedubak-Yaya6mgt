@@ -22,7 +22,7 @@ async function sendResponse(data)
             lastName: user.lastName,
         }
     };
-    return JSON.stringify(response);
+    return response;
 }
 
 module.exports.setUser = async (req, res) => {
