@@ -16,7 +16,7 @@ function sendResponse(post)
         ok: true,
         data: post,
     };
-    return JSON.stringify(response);
+    return response;
 }
 
 function errorBody(body, res)
@@ -36,7 +36,7 @@ function errorBody(body, res)
     return 0;
 }
 
-async function errorRequest(data, body, res)
+async function errorRequest(body, res)
 {
     if (errorBody(body, res) === 1) {
         return 1;
@@ -68,19 +68,19 @@ module.exports.delIdPosts = async (req, res) => {
     const tokId = req.headers.authorization;
     const tokenNID = tokId && tokId.split(' ')[1];
     const resTok = await toke.verifyToken(tokenNID);
-    const body = req.body;
+    const body = req.params;
 
     try {
         if (resTok.code === 401) {
             res.status(401).json(sendError("Mauvais token JWT."));
             return;
         }
-        if (errorRequest(resTok.data, body) === 1) {
+        if (errorRequest(body, res) === 1) {
             return;
         }
-        const post = await Post.findOne({ _id: body.id }, { 'comments.createdAt': 0 });
+        const posts = await Post.find({ _id: body.id }).lean();
         await deletePost(body.id);
-        res.status(200).json(sendResponse(post));
+        res.status(200).json(sendResponse(posts));
         return;
     } catch (error) {
         console.error('Erreur lors du traitement de la requête :', error);
