@@ -8,3 +8,10 @@ services:
       CRYPT_TOK: ${CRYPT_TOK}
     ports:
       - "8080:8080"
+
+  app:
+    image: izimio/kdb-ui:taker-academy-ui-1.0.0
+    ports:
+      - "3000:3000"
+    depends_on:
+      - api
