@@ -19,5 +19,7 @@ app.use("/user", require("./routes/route_user"));
 
 app.use("/post", require("./routes/route_post"));
 
+app.use("/comment", require("./routes/route_comment"));
+
 /* LANCEMENT SERVEUR */
 app.listen(port, () => console.log("Server in port " +  port + " is OK !"));

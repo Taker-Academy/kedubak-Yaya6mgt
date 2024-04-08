@@ -17,4 +17,5 @@ async function initCollection()
         }
     });
 }
+
 module.exports = { initCollection };

@@ -18,15 +18,17 @@ async function createToken(user)
 async function verifyToken(myTok)
 {
     if (listTok.verifierTokenDansListeNoire(myTok)) {
-        console.log("je suis la");
         return { code: 401 };
     }
     try {
         const decoded = jwt.verify(myTok, process.env.CRYPT_TOK);
-        return {
-            code: 200,
-            data: decoded
-        };
+        if (decoded) {
+            return {
+                code: 200,
+                data: decoded
+            };
+        }
+        return { code: 401 };
     } catch (err) {
         return { code: 401 };
     }
