@@ -1,15 +1,18 @@
 const toke = require("../../functionUtil/handlingToken");
 const Post = require('../../models/models_Post');
+const User = require('../../models/models_User');
 
-const lastComment = {};
+async function timeComment(userId)
+{
+    const user = await User.findById(userId).exec();
+    const currentTime = new Date().getTime();
 
-function timeComment(userId) {
-    const lastTimestamp = lastComment[userId];
-    if (!lastTimestamp) {
+    if ((currentTime - user.lastUpVote) >= (60 * 1000)) {
+        user.lastUpVote = new Date();
+        await user.save();
         return true;
     }
-    const currentTime = new Date().getTime();
-    return (currentTime - lastTimestamp) >= (60 * 1000);
+    return false;
 }
 
 function sendError(message)
@@ -52,10 +55,6 @@ async function errorRequest(body, myId, res)
     if (errorBody(body, res) === 1) {
         return 1;
     }
-    if (!timeComment(myId)) {
-        res.status(403).json(sendError("Vous ne pouvez voter que toutes les minutes."));
-        return 1;
-    }
     const post = await Post.findById(body.id).exec();
     if (!post) {
         res.status(404).json(sendError("Élément non trouvé."));
@@ -64,6 +63,10 @@ async function errorRequest(body, myId, res)
     const isVote = post.upVotes.indexOf(myId);
     if (isVote !== -1) {
         res.status(409).json(sendError("Vous avez déjà voté pour ce post."));
+        return 1;
+    }
+    if (await timeComment(myId) === false) {
+        res.status(403).json(sendError("Vous ne pouvez voter que toutes les minutes."));
         return 1;
     }
     return 0;
@@ -75,7 +78,6 @@ module.exports.setVotePosts = async (req, res) => {
     const resTok = await toke.verifyToken(tokenNID);
     const body = req.params;
     try {
-        const time = new Date();
         if (resTok.code === 401) {
             res.status(401).json(sendError("Mauvais token JWT."));
             return;
@@ -87,7 +89,6 @@ module.exports.setVotePosts = async (req, res) => {
         const posts = await Post.findById(body.id).exec();
         posts.upVotes.push(resTok.data.userId);
         await posts.save();
-        lastComment[resTok.data.userId] = time.getTime();
         res.status(200).json(sendResponse(posts));
         return;
     } catch (error) {
