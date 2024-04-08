@@ -2,20 +2,6 @@ const toke = require("../../functionUtil/handlingToken");
 const Post = require('../../models/models_Post');
 const { response } = require("express");
 
-// async function getAllPosts(data) {
-//     try {
-//         const posts = await Post.findOne({ userId: data.userId}, { 'comments.createdAt': 0 });
-//         const postClean = posts.map(post => {
-//             const { __v, updatedAt, ...newPost } = post.toObject();
-//             return newPost;
-//         });
-//         return postClean;
-//     } catch (error) {
-//         console.error('Erreur lors de la récupération des posts :', error);
-//         throw error;
-//     }
-// }
-
 async function getAllPosts(data) {
     try {
         const posts = await Post.find({ userId: data.userId}).lean();
@@ -32,7 +18,7 @@ function sendError(message)
         ok: false,
         error: message,
     };
-    return JSON.stringify(response);
+    return response;
 }
 
 function sendResponse(post)
@@ -41,7 +27,7 @@ function sendResponse(post)
         ok: true,
         data: post,
     };
-    return JSON.stringify(response);
+    return response;
 }
 
 module.exports.setMePosts = async (req, res) => {
@@ -55,10 +41,7 @@ module.exports.setMePosts = async (req, res) => {
             return;
         }
         const allPost = await getAllPosts(resTok.data);
-        res.status(200).json({
-            ok: true,
-            data: allPost,
-        });
+        await res.status(200).json(sendResponse(allPost));
         return;
     } catch (error) {
         console.error('Erreur lors du traitement de la requête :', error);

@@ -8,7 +8,7 @@ function sendError(message)
         ok: false,
         error: message,
     };
-    return JSON.stringify(response);
+    return response;
 }
 
 function errorForRegister(body, res)
@@ -43,7 +43,7 @@ async function sendResponse(body)
             }
         }
     };
-    return JSON.stringify(response, null, 4);
+    return response;
 }
 
 module.exports.setRegister = async (req, res) => {
@@ -59,7 +59,7 @@ module.exports.setRegister = async (req, res) => {
             return;
         }
         const user = await sendResponse(body);
-        res.status(200).json(JSON.parse(user));
+        res.status(200).json(user);
         return;
     } catch (error) {
         console.error('Erreur lors du traitement de la requête :', error);

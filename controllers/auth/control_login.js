@@ -100,7 +100,7 @@ async function sendResponse(body)
             }
         }
     };
-    return JSON.stringify(response, null, 4);
+    return response;
 }
 
 function sendError(message)
@@ -109,7 +109,7 @@ function sendError(message)
         ok: false,
         error: message,
     };
-    return JSON.stringify(response);
+    return response;
 }
 
 module.exports.setLogin = async (req, res) => {
@@ -122,7 +122,7 @@ module.exports.setLogin = async (req, res) => {
         const newBody = await getDataWithMail(body.email);
         console.log(newBody);
         const user = await sendResponse(newBody);
-        res.status(200).json(JSON.parse(user));
+        res.status(200).json(user);
         return;
     } catch (error) {
         console.error('Erreur lors du traitement de la requête :', error);

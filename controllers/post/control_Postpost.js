@@ -17,7 +17,7 @@ async function sendResponse(post)
             upVotes: [],
         }
     };
-    return JSON.stringify(response);
+    return response;
 }
 
 function sendError(message)
@@ -26,7 +26,7 @@ function sendError(message)
         ok: false,
         error: message,
     };
-    return JSON.stringify(response);
+    return response;
 }
 
 async function createPost(body, data)

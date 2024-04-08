@@ -8,7 +8,7 @@ function sendError(message)
         ok: false,
         error: message,
     };
-    return JSON.stringify(response);
+    return response;
 }
 
 async function sendResponse(user)
@@ -22,7 +22,7 @@ async function sendResponse(user)
             removed: true,
         }
     };
-    return JSON.stringify(response);
+    return response;
 }
 
 async function searchDelete(data, res, token)

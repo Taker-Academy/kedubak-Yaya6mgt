@@ -1,3 +1,4 @@
+const { json } = require("express");
 const toke = require("../../functionUtil/handlingToken");
 const Post = require('../../models/models_Post');
 
@@ -7,7 +8,7 @@ function sendError(message)
         ok: false,
         error: message,
     };
-    return JSON.stringify(response);
+    return response;
 }
 
 function sendResponse(post)
@@ -36,14 +37,18 @@ function errorBody(body, res)
     return 0;
 }
 
-async function errorRequest(body, res)
+async function errorRequest(body, res, id)
 {
     if (errorBody(body, res) === 1) {
         return 1;
     }
-    const post = await Post.find({_id: body.id});
-    if (!post) {
+    const posts = await Post.findById(body.id).exec();
+    if (!posts) {
         res.status(404).json(sendError("Élément non trouvé."));
+        return 1;
+    }
+    if (posts.userId !== id) {
+        res.status(403).json(sendError("L'utilisateur n'est pas le propriétaire de l'élément."));
         return 1;
     }
     return 0;
@@ -75,12 +80,13 @@ module.exports.delIdPosts = async (req, res) => {
             res.status(401).json(sendError("Mauvais token JWT."));
             return;
         }
-        if (errorRequest(body, res) === 1) {
+        const errReq = await errorRequest(body, res, resTok.data.userId);
+        if (errReq === 1) {
             return;
         }
         const posts = await Post.find({ _id: body.id }).lean();
         await deletePost(body.id);
-        res.status(200).json(sendResponse(posts));
+        await res.status(200).json(sendResponse(posts));
         return;
     } catch (error) {
         console.error('Erreur lors du traitement de la requête :', error);

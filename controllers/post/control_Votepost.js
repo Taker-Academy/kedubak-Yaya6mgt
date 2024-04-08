@@ -1,6 +1,17 @@
 const toke = require("../../functionUtil/handlingToken");
 const Post = require('../../models/models_Post');
 
+const lastComment = {};
+
+function timeComment(userId) {
+    const lastTimestamp = lastComment[userId];
+    if (!lastTimestamp) {
+        return true;
+    }
+    const currentTime = new Date().getTime();
+    return (currentTime - lastTimestamp) >= (60 * 1000);
+}
+
 function sendError(message)
 {
     const response = {
@@ -22,49 +33,61 @@ function sendResponse(posts)
 function errorBody(body, res)
 {
     if (!body) {
-        res.status(400).json(sendError("Mauvaise requête, paramètres manquants ou invalides."));
+        res.status(422).json(sendError("ID invalide."));
         return 1;
     }
     if (!body.id) {
-        res.status(400).json(sendError("Mauvaise requête, paramètres manquants ou invalides."));
+        res.status(422).json(sendError("ID invalide."));
         return 1;
     }
     if (typeof body.id !== "string") {
-        res.status(400).json(sendError("Mauvaise requête, paramètres manquants ou invalides."));
+        res.status(422).json(sendError("ID invalide."));
         return 1;
     }
     return 0;
 }
 
-async function errorRequest(body, res)
+async function errorRequest(body, myId, res)
 {
     if (errorBody(body, res) === 1) {
         return 1;
     }
-    const post = await Post.findById({ _id: body.id }).exec();
+    if (!timeComment(myId)) {
+        res.status(403).json(sendError("Vous ne pouvez voter que toutes les minutes."));
+        return 1;
+    }
+    const post = await Post.findById(body.id).exec();
     if (!post) {
         res.status(404).json(sendError("Élément non trouvé."));
+        return 1;
+    }
+    const isVote = post.upVotes.indexOf(myId);
+    if (isVote !== -1) {
+        res.status(409).json(sendError("Vous avez déjà voté pour ce post."));
         return 1;
     }
     return 0;
 }
 
-module.exports.setIdPosts = async (req, res) => {
+module.exports.setVotePosts = async (req, res) => {
     const tokId = req.headers.authorization;
     const tokenNID = tokId && tokId.split(' ')[1];
     const resTok = await toke.verifyToken(tokenNID);
     const body = req.params;
-
     try {
+        const time = new Date();
         if (resTok.code === 401) {
             res.status(401).json(sendError("Mauvais token JWT."));
             return;
         }
-        const errReq = await errorRequest(body, res);
+        const errReq = await errorRequest(body, resTok.data.userId, res);
         if (errReq === 1) {
             return;
         }
-        const posts = await Post.findById({ _id: body.id }).exec();
+        const posts = await Post.findById(body.id).exec();
+        posts.upVotes.push(resTok.data.userId);
+        await posts.save();
+        lastComment[resTok.data.userId] = time.getTime();
         res.status(200).json(sendResponse(posts));
         return;
     } catch (error) {

@@ -20,7 +20,7 @@ function sendError(message)
         ok: false,
         error: message,
     };
-    return JSON.stringify(response);
+    return response;
 }
 
 async function sendResponse(user)
@@ -33,7 +33,7 @@ async function sendResponse(user)
             lastName: user.lastName,
         }
     };
-    return JSON.stringify(response);
+    return response;
 }
 
 async function modifData(user, body, res) {
