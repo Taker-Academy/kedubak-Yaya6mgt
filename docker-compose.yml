@@ -1,0 +1,10 @@
+version: "3.8"
+
+services:
+  api:
+    build: ./
+    environment:
+      MONGO_URL: ${MONGO_URL}
+      CRYPT_TOK: ${CRYPT_TOK}
+    ports:
+      - "8080:8080"
