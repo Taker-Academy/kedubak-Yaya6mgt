@@ -84,7 +84,7 @@ module.exports.delIdPosts = async (req, res) => {
         if (errReq === 1) {
             return;
         }
-        const posts = await Post.find({ _id: body.id }).lean();
+        const posts = await Post.findById(body.id ).exec();
         await deletePost(body.id);
         await res.status(200).json(sendResponse(posts));
         return;

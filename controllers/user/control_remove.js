@@ -47,7 +47,6 @@ async function searchDelete(data, res, token)
             .catch(error => {
                 console.error('Erreur lors de la suppression de l\'utilisateur :', error);
             });
-        console.log(response);
         res.status(200).json(response);
     } catch (error) {
         console.error('Erreur lors de la suppression :', error);

@@ -28,7 +28,6 @@ function sendResponse(post)
         ok: true,
         data: post,
     };
-    console.log(response);
     return response;
 }
 
@@ -44,7 +43,6 @@ module.exports.setGetPosts = async (req, res) => {
         }
         const allPost = await getAllPosts();
         const response = sendResponse(allPost);
-        console.log(response);
         res.status(200).json({ok: true, data: allPost});
         return;
     } catch (error) {

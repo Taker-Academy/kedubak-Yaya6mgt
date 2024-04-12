@@ -84,7 +84,6 @@ module.exports.setPostPosts = async (req, res) => {
         }
         const post = await createPost(body, resTok.data);
         const response = await sendResponse(post);
-        console.log(response);
         res.status(201).json(response);
         return;
     } catch (error) {

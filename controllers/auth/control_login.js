@@ -120,7 +120,6 @@ module.exports.setLogin = async (req, res) => {
             return;
         }
         const newBody = await getDataWithMail(body.email);
-        console.log(newBody);
         const user = await sendResponse(newBody);
         res.status(200).json(user);
         return;

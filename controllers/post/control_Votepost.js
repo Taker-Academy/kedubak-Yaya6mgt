@@ -28,7 +28,7 @@ function sendResponse(posts)
 {
     const response = {
         ok: true,
-        data: posts,
+        message: "post upvoted"
     };
     return response;
 }
@@ -61,8 +61,8 @@ async function errorRequest(body, myId, res)
         return 1;
     }
     const isVote = post.upVotes.indexOf(myId);
-    if (isVote !== -1) {
-        res.status(409).json(sendError("Vous avez déjà voté pour ce post."));
+    if (isVote !== -1 && post.upVotes) {
+        res.status(403).json(sendError("Vous avez déjà voté pour ce post."));
         return 1;
     }
     if (await timeComment(myId) === false) {

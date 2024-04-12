@@ -51,7 +51,7 @@ async function addNewUser(body) {
         return 0;
     } catch (error) {
         console.error('Erreur lors de l\'ajout de l\'utilisateur :', error);
-        return 1;
+        return 2;
     }
 }
 

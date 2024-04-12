@@ -55,11 +55,15 @@ module.exports.setRegister = async (req, res) => {
         }
         const newUseRes = await addNewUser(body);
         if (newUseRes === 1) {
+            res.status(400).json(sendError("Mauvais identifiants."));
+            return;
+        }
+        if (newUseRes === 2) {
             res.status(401).json(sendError("Mauvais identifiants."));
             return;
         }
         const user = await sendResponse(body);
-        res.status(200).json(user);
+        res.status(201).json(user);
         return;
     } catch (error) {
         console.error('Erreur lors du traitement de la requête :', error);
